@@ -1,0 +1,30 @@
+NEI <- readRDS("./NEI/summarySCC_PM25.rds")
+SCC <- readRDS("./SCC/Source_Classification_Code.rds")
+
+
+# Sum up emissions by year for Baltimore, MD and Los Angeles, CA
+
+subsetNEI <- NEI[(NEI$fips=="24510"|NEI$fips=="06037") & NEI$type=="ON-ROAD",  ]
+
+aggregatedTotalByYearAndFips <- aggregate(Emissions ~ year + fips, subsetNEI, sum)
+
+aggregatedTotalByYearAndFips$fips[aggregatedTotalByYearAndFips$fips=="24510"] <- "Baltimore, MD"
+
+aggregatedTotalByYearAndFips$fips[aggregatedTotalByYearAndFips$fips=="06037"] <- "Los Angeles, CA"
+
+
+
+
+#Plot6
+
+library(ggplot2)
+
+png('plot6.png')
+
+g<-ggplot(aggregatedTotalByYearAndFips,aes(factor(year),Emissions))
+
+p<-g+geom_bar(stat="identity")+facet_grid(. ~ fips)+labs(title="Total Emissions from motor vehicle from 1999 to 2008; Baltimore,MD vs Los Angeles, CA")+labs(x="Year",y="Total PM2.5 emission")
+
+print(p)
+
+dev.off()

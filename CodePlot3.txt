@@ -1,0 +1,22 @@
+NEI <- readRDS("./NEI/summarySCC_PM25.rds")
+SCC <- readRDS("./SCC/Source_Classification_Code.rds")
+
+# sum up emissions by year for Baltiomore City
+
+subsetNEI  <- NEI[NEI$fips=="24510", ]
+
+aggregatedTotalByYearAndType <- aggregate(Emissions ~ year + type, subsetNEI, sum)
+
+
+
+#Plot3
+
+library(ggplot2)
+
+png('plot3.png')
+
+g<-ggplot(aggregatedTotalByYearAndType,aes(year,Emissions))
+p<-g+geom_line(aes(color=type))+labs(title="Total Emissions in Baltimore City")+labs(x="Year",y="Total PM2.5 emission")
+print(p)
+
+dev.off()
